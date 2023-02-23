@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Dip</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">tqs.euromillions</a>
+</div>
+
+<h1>Coverage Summary for Class: Dip (tqs.euromillions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Dip</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (6/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48,1%
+  </span>
+  <span class="absValue">
+    (26/54)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package tqs.euromillions;
+&nbsp;
+&nbsp;import java.security.NoSuchAlgorithmException;
+&nbsp;import java.security.SecureRandom;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import tqs.sets.BoundedSetOfNaturals;
+&nbsp;
+&nbsp;import java.util.Random;
+&nbsp;
+&nbsp;/**
+&nbsp; * A set of 5 numbers and 2 starts according to the Euromillions ranges.
+&nbsp; *
+&nbsp; * @author ico0
+&nbsp; */
+&nbsp;public class Dip {
+<b class="fc">&nbsp;    static Random generator = new Random();</b>
+&nbsp;    public static final int NUMBERS_RANGE_MAX = 50;
+&nbsp;    public static final int STARS_RANGE_MAX = 10;
+&nbsp;    public static final int NUMBERS_REQUIRED = 5;
+&nbsp;    public static final int STARS_REQUIRED = 2;
+&nbsp;    private BoundedSetOfNaturals numbers;
+&nbsp;    private BoundedSetOfNaturals stars;
+&nbsp;
+<b class="fc">&nbsp;    public Dip() {</b>
+<b class="fc">&nbsp;        numbers = new BoundedSetOfNaturals(NUMBERS_REQUIRED);</b>
+<b class="fc">&nbsp;        stars = new BoundedSetOfNaturals(STARS_REQUIRED);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Dip(int[] arrayOfNumbers, int[] arrayOfStarts) {
+<b class="fc">&nbsp;        this();</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;       if( ! Arrays.stream(arrayOfNumbers).allMatch( nr -&gt; nr &gt;= 1 &amp;&amp; nr &lt;= NUMBERS_RANGE_MAX) ){</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;numbers set are outside the expected range!&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if( ! Arrays.stream(arrayOfStarts).allMatch(nr -&gt; nr &gt;= 1 &amp;&amp; nr &lt;= STARS_RANGE_MAX) ){</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;numbers set are outside the expected range!&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        if (NUMBERS_REQUIRED == arrayOfNumbers.length &amp;&amp; STARS_REQUIRED == arrayOfStarts.length) {</b>
+<b class="fc">&nbsp;            numbers.add(arrayOfNumbers);</b>
+<b class="fc">&nbsp;            stars.add(arrayOfStarts);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;wrong number of elements in numbers/stars&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public BoundedSetOfNaturals getNumbersColl() {
+<b class="fc">&nbsp;        return numbers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BoundedSetOfNaturals getStarsColl() {
+<b class="fc">&nbsp;        return stars;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Dip generateRandomDip()  {
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        Dip randomDip = new Dip();</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; NUMBERS_REQUIRED; ) {</b>
+<b class="nc">&nbsp;            int candidate = generator.nextInt(NUMBERS_RANGE_MAX) + 1;</b>
+<b class="nc">&nbsp;            if (!randomDip.getNumbersColl().contains(candidate)) {</b>
+<b class="nc">&nbsp;                randomDip.getNumbersColl().add(candidate);</b>
+<b class="nc">&nbsp;                i++;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; STARS_REQUIRED; ) {</b>
+<b class="nc">&nbsp;            int candidate = generator.nextInt(STARS_RANGE_MAX) + 1;</b>
+<b class="nc">&nbsp;            if (!randomDip.getStarsColl().contains(candidate)) {</b>
+<b class="nc">&nbsp;                randomDip.getStarsColl().add(candidate);</b>
+<b class="nc">&nbsp;                i++;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return randomDip;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="nc">&nbsp;        int hash = 3;</b>
+<b class="nc">&nbsp;        hash = 29 * hash + Objects.hashCode(this.numbers);</b>
+<b class="nc">&nbsp;        hash = 29 * hash + Objects.hashCode(this.stars);</b>
+<b class="nc">&nbsp;        return hash;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="nc">&nbsp;        if (this == obj) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (obj == null) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (getClass() != obj.getClass()) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        final Dip other = (Dip) obj;</b>
+<b class="nc">&nbsp;        if (!Objects.equals(this.numbers, other.numbers)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return Objects.equals(this.stars, other.stars);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * prepares a string representation of the data structure, formated for
+&nbsp;     * printing
+&nbsp;     *
+&nbsp;     * @return formatted string with data
+&nbsp;     */
+&nbsp;    public String format() {
+<b class="fc">&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="fc">&nbsp;        sb.append(&quot;N[&quot;);</b>
+<b class="fc">&nbsp;        for (int number : getNumbersColl()) {</b>
+<b class="fc">&nbsp;            sb.append(String.format(&quot;%3d&quot;, number));</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        sb.append(&quot;] S[&quot;);</b>
+<b class="fc">&nbsp;        for (int star : getStarsColl()) {</b>
+&nbsp;            // the formating codes were missing
+<b class="fc">&nbsp;            sb.append(String.format(&quot;%3d&quot;, star));</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        sb.append(&quot;]&quot;);</b>
+<b class="fc">&nbsp;        return sb.toString();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-02-23 16:28</div>
+</div>
+</body>
+</html>

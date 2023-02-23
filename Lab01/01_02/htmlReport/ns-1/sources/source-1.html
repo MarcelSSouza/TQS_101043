@@ -1,0 +1,151 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CuponEuromillions</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">tqs.euromillions</a>
+</div>
+
+<h1>Coverage Summary for Class: CuponEuromillions (tqs.euromillions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CuponEuromillions</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package tqs.euromillions;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Iterator;
+&nbsp;
+&nbsp;/**
+&nbsp; * models coupon, i.e., a set of several dips, as submitted by a player
+&nbsp; *
+&nbsp; * @author ico0
+&nbsp; */
+<b class="nc">&nbsp;public class CuponEuromillions implements Iterable&lt;Dip&gt; {</b>
+&nbsp;
+<b class="nc">&nbsp;    private final ArrayList&lt;Dip&gt; dipsCollection = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    public void appendDip(Dip dip) {
+<b class="nc">&nbsp;        dipsCollection.add(dip);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int countDips() {
+<b class="nc">&nbsp;        return dipsCollection.size();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public Dip getDipByIndex(int order) {
+<b class="nc">&nbsp;        return dipsCollection.get(order);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return a formatted string with the Dips info
+&nbsp;     */
+&nbsp;    public String format() {
+<b class="nc">&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc">&nbsp;        int dipIndex = 1;</b>
+<b class="nc">&nbsp;        for (Dip dip : this) {</b>
+<b class="nc">&nbsp;            sb.append(String.format(&quot;Dip #%d:&quot;, dipIndex++));</b>
+<b class="nc">&nbsp;            sb.append(dip.format());</b>
+<b class="nc">&nbsp;            sb.append(&quot;\n&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return sb.toString();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Iterator&lt;Dip&gt; iterator() {
+<b class="nc">&nbsp;        return dipsCollection.iterator();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-02-23 16:28</div>
+</div>
+</body>
+</html>
