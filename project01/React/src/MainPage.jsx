@@ -10,24 +10,11 @@ export default function MainPage() {
   function search() {
     console.log(city)
 
-
-    const options = {
-      method: "GET",
-      url: "https://api.ambeedata.com/latest/by-city",
-      params: {
-        city: city,
-      },
-      headers: {
-        "x-api-key": "2513ec5fd9098f394d9304ab71f19faefc4a6306f45784003ed8f20eeae8ea70",
-        "Content-type": "application/json",
-      },
-    };
     
-    axios
-      .request(options)
+    axios.get("http://localhost:8080/airquality/"+ city)
       .then(function (response) {
         console.log(response.data);
-        setfirst(response.data.stations[0])
+        setfirst(response.data)
       })
       .catch(function (error) {
         console.error(error);
