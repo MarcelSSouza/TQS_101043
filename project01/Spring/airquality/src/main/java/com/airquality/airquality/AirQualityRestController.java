@@ -1,6 +1,10 @@
 package com.airquality.airquality;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,29 +19,78 @@ import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/")
-public class AirQualiyRestController {
-        @GetMapping("/airquality/{city}")
-        public Object get_air(@PathVariable(name = "city") String city) throws Exception {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                                .uri(URI.create("https://api.ambeedata.com/latest/by-city?city=" + city))
-                                .header("x-api-key", "2513ec5fd9098f394d9304ab71f19faefc4a6306f45784003ed8f20eeae8ea70")
-                                .header("Content-type", "application/json")
-                                .build();
+public class AirQualityRestController {
+        private final Map<String, String> cache = new HashMap<>();
+        private final Map<String, List<Object>> cache2 = new HashMap<>();
+        private int cacheHits = 0;
+        private int cacheMisses = 0;
+        private int apiCalls = 0;
+        private final Logger logger = LoggerFactory.getLogger(AirQualityRestController.class);
 
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                String responseBody = response.body();
-                ObjectMapper mapper = new ObjectMapper();
-                Object json = mapper.readValue(responseBody, Object.class);
-                return json;
+        public AirQualityRestController() {
+                Timer timer = new Timer();
+                TimerTask cacheClearTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                                cache.clear();
+                                cache2.clear();
+                                logger.info("Cache cleared");
+                                logger.info("Recreated cache");
+                        }
+                };
+
+                timer.schedule(cacheClearTask, 0, 600000 );
         }
 
-        @GetMapping("/airquality/predictions/{city}")
-        public List<Object> get_air2(@PathVariable(name = "city") String city) throws Exception {
+
+    @GetMapping("/airquality/{city}")
+    public Object get_air(@PathVariable(name = "city") String city) throws Exception {
+        apiCalls++;
+        logger.info("Received request for city: {}", city);
+        String cachedResponse = cache.get(city);
+        if (cachedResponse != null) {
+            cacheHits++;
+            logger.info("Cache hit for city: {}", city);
+            return cachedResponse;
+        }
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.ambeedata.com/latest/by-city?city=" + city))
+            .header("x-api-key", "2513ec5fd9098f394d9304ab71f19faefc4a6306f45784003ed8f20eeae8ea70")
+            .header("Content-type", "application/json")
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String responseBody = response.body();
+        ObjectMapper mapper = new ObjectMapper();
+        Object json = mapper.readValue(responseBody, Object.class);
+        cache.put(city, responseBody);
+        cacheMisses++;
+        logger.info("Cache miss for city: {}", city);
+
+        return json;
+    }
+
+    @GetMapping("/airquality/predictions/{city}")
+    public List<Object> get_air2(@PathVariable(name = "city") String city) throws Exception {
+        apiCalls++;
+        logger.info("Received request for predictions for city: {}", city);
+        List<Object> cachedResponse = cache2.get(city);
+        if (cachedResponse != null) {
+            cacheHits++;
+            logger.info("Cache hit for predictions for city: {}", city);
+            return cachedResponse;
+        }
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                                 .uri(URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + city
@@ -128,8 +181,35 @@ public class AirQualiyRestController {
                 }
                 String jsonResults = mapper.writeValueAsString(results);
                 List<Object> jsonObjList = mapper.readValue(jsonResults, List.class).subList(0, 5);
+                cacheMisses++;
+                cache2.put(city, jsonObjList);
+                logger.info("Cache miss for city: {}", city);
+
                 return jsonObjList;
 
         }
+
+        @GetMapping("/airquality/stats")
+    public String getAirQualityStats() {
+        int totalRequests = cacheHits + cacheMisses;
+        float hitRate = ((float) cacheHits / totalRequests) * 100;
+        float missRate = ((float) cacheMisses / totalRequests) * 100;
+
+        String stats = "Cache hits: " + cacheHits + "\n"
+                + "Cache misses: " + cacheMisses + "\n"
+                + "Hit rate: " + hitRate + "%\n"
+                + "Miss rate: " + missRate + "%\n"
+                + "Total API calls: " + apiCalls;
+
+        return stats;
+    }
+
+    @GetMapping("/airquality/reset")
+    public void resetCacheAndStats() {
+        cache.clear();
+        cacheHits = 0;
+        cacheMisses = 0;
+        apiCalls = 0;
+    }
 
 }

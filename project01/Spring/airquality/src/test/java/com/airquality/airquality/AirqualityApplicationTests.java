@@ -10,4 +10,5 @@ class AirqualityApplicationTests {
 	void contextLoads() {
 	}
 
+
 }
