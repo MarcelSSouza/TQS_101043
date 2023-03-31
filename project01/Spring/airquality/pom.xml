@@ -12,15 +12,24 @@
 	<artifactId>airquality</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>airquality</name>
-	<description>Demo project for Spring Boot</description>
+	<description>AirQuality Project fo TQS Classes</description>
 	<properties>
 		<java.version>17</java.version>
-	</properties>
+  <sonar.organization>marcelssouza</sonar.organization>
+  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
+		<dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>4.1.0</version>
+</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

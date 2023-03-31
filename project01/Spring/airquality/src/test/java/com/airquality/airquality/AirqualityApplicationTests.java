@@ -1,10 +1,7 @@
 package com.airquality.airquality;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,7 +26,9 @@ class AirqualityApplicationTests {
 	public void apiCallsCounterisWorking() throws Exception {
 		AirQualityRestController airQualityService = new AirQualityRestController();
 		airQualityService.get_air("London");
-		assertEquals(1, airQualityService.getAirQualityStats().get("Total API calls"));
+		airQualityService.get_air("London");
+		airQualityService.get_air("London");
+		assertEquals(3, airQualityService.getAirQualityStats().get("Total API calls"));
 	}
 
 	// Test for Latitude and Longitude in AirQualityRestController
@@ -62,9 +61,41 @@ class AirqualityApplicationTests {
 		airQualityService.resetCacheAndStats();
 		assertEquals(0, airQualityService.getAirQualityStats().get("Cache hits"));
 		assertEquals(0, airQualityService.getAirQualityStats().get("Cache misses"));
-
 		assertNotEquals(0, airQualityService.getAirQualityStats().get("Total API calls"));
 	}
+
+
+	@Test
+	public void cacheCalled() throws Exception {
+		AirQualityRestController airQualityService = new AirQualityRestController();
+		airQualityService.get_air("London");
+		airQualityService.get_air("London");
+		airQualityService.get_air("London");
+		assertEquals(2, airQualityService.getAirQualityStats().get("Cache hits"));
+		assertEquals(1, airQualityService.getAirQualityStats().get("Cache misses"));
+		assertEquals(3, airQualityService.getAirQualityStats().get("Total API calls"));
+	}
+
+	@Test
+public void cacheClearedAfter15Minutes() throws Exception {
+    AirQualityRestController airQualityService = new AirQualityRestController();
+    airQualityService.get_air("London");
+    assertEquals(0, airQualityService.getAirQualityStats().get("Cache hits"));
+    assertEquals(1, airQualityService.getAirQualityStats().get("Cache misses"));
+    assertEquals(1, airQualityService.getAirQualityStats().get("Total API calls"));
+    airQualityService.get_air("London");
+    assertEquals(1, airQualityService.getAirQualityStats().get("Cache hits"));
+    assertEquals(1, airQualityService.getAirQualityStats().get("Cache misses"));
+    assertEquals(2, airQualityService.getAirQualityStats().get("Total API calls"));
+    // Wait for 15 minutes
+    Thread.sleep(15 * 60 * 1000);
+    // Verify that the cache has been cleared
+    airQualityService.get_air("London");
+    assertEquals(0, airQualityService.getAirQualityStats().get("Cache hits"));
+    assertEquals(1, airQualityService.getAirQualityStats().get("Cache misses"));
+    assertEquals(3, airQualityService.getAirQualityStats().get("Total API calls"));
+}
+
 
 
 }
