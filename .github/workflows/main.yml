@@ -24,7 +24,7 @@ jobs:
         run: mvn -B test --file project01/Spring/airquality/pom.xml
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@main
+        uses: sonarsource/sonarcloud-github-action@master
         with:
           organization: marcelssouza
           projectKey: MarcelSSouza_TQS_101043
