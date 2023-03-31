@@ -23,10 +23,8 @@ jobs:
       - name: Test with Maven
         run: mvn -B test --file project01/Spring/airquality/pom.xml
 
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        with:
-          entryPoint: scanner
-          args: >
-            -Dsonar.organization=<your_organization_key>
-            -Dsonar.projectKey=<your_project_key>
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MarcelSSouza_TQS_101043
