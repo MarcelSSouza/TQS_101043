@@ -35,7 +35,7 @@ public class AirQualityRestController {
         private int cacheHits = 0;
         private int cacheMisses = 0;
         private int apiCalls = 0;
-        private final Logger logger = LoggerFactory.getLogger(AirQualityRestController.class);
+        final Logger logger = LoggerFactory.getLogger(AirQualityRestController.class);
 
         public AirQualityRestController() {
                 Timer timer = new Timer();
@@ -89,8 +89,12 @@ public class AirQualityRestController {
         if (cachedResponse != null) {
             cacheHits++;
             logger.info("Cache hit for predictions for city: {}", city);
+            logger.info("Cache hit for city: {}", city);
+
             return cachedResponse;
         }
+                logger.info("Cache miss for city: {}", city);
+
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                                 .uri(URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + city
@@ -103,19 +107,19 @@ public class AirQualityRestController {
                 ObjectMapper mapper = new ObjectMapper();
                 String lat = mapper.readTree(responseBody).get(0).get("lat").asText();
                 String lon = mapper.readTree(responseBody).get(0).get("lon").asText();
-
+                Object latlon = Map.of("lat", lat, "lon", lon);
                 String url = "http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon
                                 + "&appid=3e56ac9f515ce67c8d613f033e5655b5";
-
                 HttpRequest request2 = HttpRequest.newBuilder()
                                 .uri(URI.create(url))
                                 .header("Content-type", "application/json")
                                 .build();
                 HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                 String responseBody2 = response2.body();
-
                 JsonNode root = mapper.readTree(responseBody2);
                 List<Object> results = new ArrayList<>();
+                results.add(latlon);
+
                 for (JsonNode node : root.get("list")) {
                         long dt = node.get("dt").asLong();
                         LocalDateTime dateTime = LocalDateTime.ofEpochSecond(dt, 0, ZoneOffset.UTC);
@@ -180,7 +184,7 @@ public class AirQualityRestController {
                         }
                 }
                 String jsonResults = mapper.writeValueAsString(results);
-                List<Object> jsonObjList = mapper.readValue(jsonResults, List.class).subList(0, 5);
+                List<Object> jsonObjList = mapper.readValue(jsonResults, List.class);
                 cacheMisses++;
                 cache2.put(city, jsonObjList);
                 logger.info("Cache miss for city: {}", city);
@@ -190,26 +194,25 @@ public class AirQualityRestController {
         }
 
         @GetMapping("/airquality/stats")
-    public String getAirQualityStats() {
-        int totalRequests = cacheHits + cacheMisses;
-        float hitRate = ((float) cacheHits / totalRequests) * 100;
-        float missRate = ((float) cacheMisses / totalRequests) * 100;
-
-        String stats = "Cache hits: " + cacheHits + "\n"
-                + "Cache misses: " + cacheMisses + "\n"
-                + "Hit rate: " + hitRate + "%\n"
-                + "Miss rate: " + missRate + "%\n"
-                + "Total API calls: " + apiCalls;
-
-        return stats;
-    }
-
+        public Map<String, Object> getAirQualityStats() {
+            int totalRequests = cacheHits + cacheMisses;
+            float hitRate = ((float) cacheHits / totalRequests) * 100;
+            float missRate = ((float) cacheMisses / totalRequests) * 100;
+    
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("Cache hits", cacheHits);
+            stats.put("Cache misses", cacheMisses);
+            stats.put("Hit rate", hitRate + "%");
+            stats.put("Miss rate", missRate + "%");
+            stats.put("Total API calls", apiCalls);
+    
+            return stats;
+        }
     @GetMapping("/airquality/reset")
     public void resetCacheAndStats() {
         cache.clear();
         cacheHits = 0;
         cacheMisses = 0;
-        apiCalls = 0;
     }
 
 }
