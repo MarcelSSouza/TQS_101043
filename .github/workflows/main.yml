@@ -2,32 +2,30 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 17
-      uses: actions/setup-java@v2
-      with:
-        java-version: 17
-        distribution: 'adopt'
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "adopt"
 
-    - name: Build with Maven
-      run: mvn -B package --file project01/Spring/airquality/pom.xml
-    - name: Test with Maven
-      run: mvn -B test --file project01/Spring/airquality/pom.xml
-      
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@main
-      with:
+      - name: Build with Maven
+        run: mvn -B package --file project01/Spring/airquality/pom.xml
+      - name: Test with Maven
+        run: mvn -B test --file project01/Spring/airquality/pom.xml
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@main
+        with:
           organization: marcelssouza
           projectKey: MarcelSSouza_TQS_101043
           token: ${{ secrets.SONAR_TOKEN }}
-	  
