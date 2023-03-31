@@ -26,6 +26,7 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         with:
-          organization: marcelssouza
-          projectKey: MarcelSSouza_TQS_101043
-          token: ${{ secrets.SONAR_TOKEN }}
+          entryPoint: scanner
+          args: >
+            -Dsonar.organization=<your_organization_key>
+            -Dsonar.projectKey=<your_project_key>
