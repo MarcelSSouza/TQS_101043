@@ -2,18 +2,26 @@ package com.airquality.airquality;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import java.util.Map;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-
 class AirqualityApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
@@ -21,6 +29,16 @@ class AirqualityApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+	@Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Before
+    public void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+	AirQualityRestController airQualityRestControllerMock = Mockito.mock(AirQualityRestController.class);
+
+    }
+	
 
 	// Test for cache APICALLS counter in AirQualityRestController
 	@Test
@@ -94,5 +112,68 @@ class AirqualityApplicationTests {
 		assertEquals(1, airQualityService.getAirQualityStats().get("Cache misses"));
 		assertEquals(3, airQualityService.getAirQualityStats().get("Total API calls"));
 	}
+
  */
+
+
+
+
+
+
+
+
+
+
+
+
+ //INTEGRATION TESTS
+	// Test if the API is working for the endpoint /airquality/stats and if the response is a number for each of the 3 keys
+    @Test
+    public void testGetAirQualityStats() throws Exception {
+        mockMvc.perform(get("/airquality/stats"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.['Cache hits']").isNumber())
+		.andExpect(jsonPath("$.['Cache misses']").isNumber())
+		.andExpect(jsonPath("$.['Total API calls']").isNumber());
+    }
+
+
+	@Test
+public void testGetInvalidCityAirQuality() throws Exception {
+    mockMvc.perform(get("/airquality/city?city=38dnaasdasdasdasdasdasdsndasd"))
+            .andExpect(status().isNotFound());
+}
+
+
+@Test
+public void testCleanPath() throws Exception {
+	mockMvc.perform(get("/airquality/London"));
+	mockMvc.perform(get("/airquality/Aveiro"));
+
+	mockMvc.perform(get("/airquality/reset"));
+
+	mockMvc.perform(get("/airquality/stats"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.['Cache hits']").value(0))
+			.andExpect(jsonPath("$.['Cache misses']").value(0)) 
+			.andExpect(jsonPath("$.['Total API calls']").value(2));
+}
+
+
+
+@Test
+public void testInvalidHttpMethod() throws Exception {
+    mockMvc.perform(post("/airquality/city?city=London"))
+            .andExpect(status().isMethodNotAllowed());
+}
+
+
+
+
+
+
+
+ 
+
+
 }
