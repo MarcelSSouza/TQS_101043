@@ -50,11 +50,14 @@ class AirqualityApplicationTests {
 	// Test for Latitude and Longitude in AirQualityRestController
 	@Test
 	public void getLatLong() throws Exception {
+		// Given
 		AirQualityRestController airQualityService = new AirQualityRestController();
+		// When
 		Object result = airQualityService.get_air2("London").get(0);
 		Map<String, Object> resultMap = (Map<String, Object>) result;
 		String lat = (String) resultMap.get("lat");
 		String lon = (String) resultMap.get("lon");
+		// Then
 		assertEquals("51.5073219", lat);
 		assertEquals("-0.1276474", lon);
 	}
@@ -63,8 +66,14 @@ class AirqualityApplicationTests {
 	// 200 = OK
 	@Test
 	public void testAirQualityStatsEndpoint() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/airquality/stats"))
-				.andExpect(MockMvcResultMatchers.status().isOk());
+		// given
+		String url = "/airquality/stats";
+
+		// when
+		mockMvc.perform(MockMvcRequestBuilders.get(url))
+
+		// then
+		.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
 	// Test for the Cache empty when calling the api CLEAN method
@@ -90,7 +99,7 @@ class AirqualityApplicationTests {
 		assertEquals(3, airQualityService.getAirQualityStats().get("Total API calls"));
 	}
 
-/* 	@Test
+	@Test
 	public void cacheClearedAfter15Minutes() throws Exception {
 		AirQualityRestController airQualityService = new AirQualityRestController();
 		airQualityService.get_air("London");
@@ -110,7 +119,7 @@ class AirqualityApplicationTests {
 		assertEquals(3, airQualityService.getAirQualityStats().get("Total API calls"));
 	}
 
- */
+
 
 
 

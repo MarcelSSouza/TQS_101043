@@ -275,6 +275,7 @@ public class AirQualityRestController {
     cache.clear();
     cacheHits = 0;
     cacheMisses = 0;
+    
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
