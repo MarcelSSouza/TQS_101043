@@ -53,11 +53,13 @@ export default function MainPage() {
         <h4>PM25: {first.PM25}</h4>
 
         <Button onClick={search2}>Predictions for the next 5 days?</Button>
-        {second && second.map((item,key) => {
-          console.log(item.components.co)
+        {second && second.slice(1).map((item,key) => {
+          console.log(second)
+          console.log(item)
+
           return (
             <div>
-              <h3>Day {key+1}</h3 >
+              <h3>Day {key+2}</h3 >
               <h4>CO: {item.components.co}  NO2: {item.components.no2}  OZONE: {item.components.o3}</h4>
               <h4>PM10: {item.components.pm10}  PM25: {item.components.pm2_5}</h4>
 

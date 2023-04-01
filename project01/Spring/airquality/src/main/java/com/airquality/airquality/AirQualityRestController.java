@@ -42,7 +42,6 @@ public class AirQualityRestController {
   public AirQualityRestController() {
     Timer timer = new Timer();
     TimerTask cacheClearTask = new TimerTask() {
-      @Override
       public void run() {
         cache.clear();
         cache2.clear();
@@ -51,7 +50,7 @@ public class AirQualityRestController {
       }
     };
 
-    timer.schedule(cacheClearTask, 0, 600000);
+    timer.schedule(cacheClearTask, 600000, 600000);
   }
 
   @GetMapping("/airquality/{city}")
@@ -174,7 +173,7 @@ public class AirQualityRestController {
 
       if (dateTime.toLocalDate().isEqual(twoDaysLater.toLocalDate())) {
         results.add(node);
-        if (results.size() == 1) {
+        if (results.size() == 2) {
           break;
         }
       }
@@ -190,7 +189,7 @@ public class AirQualityRestController {
       LocalDateTime threeDaysLater = LocalDateTime.now().plusDays(2);
       if (dateTime.toLocalDate().isEqual(threeDaysLater.toLocalDate())) {
         results.add(node);
-        if (results.size() == 2) {
+        if (results.size() == 3) {
           break;
         }
       }
@@ -206,7 +205,7 @@ public class AirQualityRestController {
       LocalDateTime fourDaysLater = LocalDateTime.now().plusDays(3);
       if (dateTime.toLocalDate().isEqual(fourDaysLater.toLocalDate())) {
         results.add(node);
-        if (results.size() == 3) {
+        if (results.size() == 4) {
           break;
         }
       }
@@ -223,7 +222,7 @@ public class AirQualityRestController {
 
       if (dateTime.toLocalDate().isEqual(fiveDaysLater.toLocalDate())) {
         results.add(node);
-        if (results.size() == 4) {
+        if (results.size() == 5) {
           break;
         }
       }
@@ -239,11 +238,13 @@ public class AirQualityRestController {
       LocalDateTime sixDaysLater = LocalDateTime.now().plusDays(5);
       if (dateTime.toLocalDate().isEqual(sixDaysLater.toLocalDate())) {
         results.add(node);
-        if (results.size() == 5) {
+        if (results.size() == 6) {
           break;
         }
       }
     }
+
+
     String jsonResults = mapper.writeValueAsString(results);
     List<Object> jsonObjList = mapper.readValue(jsonResults, List.class);
     cacheMisses++;
