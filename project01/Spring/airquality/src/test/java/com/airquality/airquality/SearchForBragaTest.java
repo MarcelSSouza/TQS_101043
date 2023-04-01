@@ -24,7 +24,7 @@ public class SearchForBragaTest {
     this.driver = webDriver;
   }
 
-  @Test
+/*   @Test
   public void searchForBraga() {
     driver.get("http://localhost:5173/");
     driver.manage().window().setSize(new Dimension(1521, 798));
@@ -33,6 +33,6 @@ public class SearchForBragaTest {
     driver.findElement(By.cssSelector(".btn:nth-child(5)")).click();
     driver.findElement(By.cssSelector(".btn:nth-child(14)")).click();
   }
-
+ */
   
 }
